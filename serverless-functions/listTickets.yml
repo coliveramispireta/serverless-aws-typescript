@@ -12,9 +12,3 @@ events:
           - X-Amz-Date
           - Authorization
           - X-Api-Key
-iamRoleStatements:
-  - Effect: Allow
-    Action:
-      - dynamodb:Scan
-      - dynamodb:Query
-    Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}

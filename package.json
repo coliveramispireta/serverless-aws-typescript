@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "test": "jest",
@@ -28,7 +28,7 @@
       "<rootDir>/tests"
     ]
   },
-    "keywords": [
+  "keywords": [
     "serverless",
     "aws",
     "lambda",

@@ -1,19 +1,19 @@
-    handler: src/handlers/updateTicket.handler
-    memorySize: 256
-    timeout: 10
-    events:
-      - http:
-          path: tickets/{id}
-          method: put
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
+handler: src/handlers/updateTicket.handler
+memorySize: 256
+timeout: 10
+events:
+  - http:
+      path: tickets/{id}
+      method: put
+      cors:
+        origin: "*"
+        headers:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - dynamodb:UpdateItem
+    Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}

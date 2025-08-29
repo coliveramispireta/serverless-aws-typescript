@@ -1,19 +1,19 @@
-    handler: src/handlers/getTicket.handler
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: tickets/{id}
-          method: get
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:GetItem
-        Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
+handler: src/handlers/getTicket.handler
+memorySize: 128
+timeout: 5
+events:
+  - http:
+      path: tickets/{id}
+      method: get
+      cors:
+        origin: "*"
+        headers:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - dynamodb:GetItem
+    Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}

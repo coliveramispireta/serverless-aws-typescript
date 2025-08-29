@@ -29,3 +29,6 @@ plugins:
 
 package:
   individually: true
+
+functions: ${file(./serverless-functions/index.yml)}
+resources: ${file(./serverless-resources/dynamodb.yml)}

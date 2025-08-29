@@ -1,5 +1,5 @@
-createTicket: ${file(./createTicket.yml)}
-listTickets: ${file(./listTickets.yml)}
-getTicket: ${file(./getTicket.yml)}
-updateTicket: ${file(./updateTicket.yml)}
-deleteTicket: ${file(./deleteTicket.yml)}
+createTicket: ${file(./serverless-functions/createTicket.yml)}
+listTickets: ${file(./serverless-functions/listTickets.yml)}
+getTicket: ${file(./serverless-functions/getTicket.yml)}
+updateTicket: ${file(./serverless-functions/updateTicket.yml)}
+deleteTicket: ${file(./serverless-functions/deleteTicket.yml)}

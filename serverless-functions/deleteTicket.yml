@@ -12,3 +12,10 @@ events:
           - X-Amz-Date
           - Authorization
           - X-Api-Key
+        allowCredentials: false
+        methods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE

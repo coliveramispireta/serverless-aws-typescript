@@ -17,11 +17,11 @@ Resources:
       Properties:
         UserPoolId: ${self:provider.environment.USER_POOL_ID} 
         LambdaConfig:
-          PreSignUp: !GetAtt PreSignUpLambda.Arn
+          PreSignUp: !GetAtt PreSignUpLambdaFunction.Arn
   PermissionsPreSignUpLambdaInvoke:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref PreSignUpLambda
+      FunctionName: !Ref PreSignUpLambdaFunction
       Action: lambda:InvokeFunction
       Principal: cognito-idp.amazonaws.com
       SourceArn: arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:provider.environment.USER_POOL_ID}

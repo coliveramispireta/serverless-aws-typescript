@@ -3,5 +3,5 @@ memorySize: 256
 timeout: 10
 events:
   - cognitoUserPool:
-      pool: ${self:provider.environment.USER_POOL_ID}
+      pool: ${self:provider.environment.USER_POOL_NAME}
       trigger: PreSignUp

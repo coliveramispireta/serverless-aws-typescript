@@ -5,3 +5,4 @@ events:
   - cognitoUserPool:
       pool: ${self:provider.environment.USER_POOL_NAME}
       trigger: PreSignUp
+      existing: true

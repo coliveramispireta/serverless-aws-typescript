@@ -12,12 +12,11 @@ Resources:
           KeyType: HASH
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
-  AttachPreSignUpTrigger:
-      Type: AWS::Cognito::UserPool
-      Properties:
-        UserPoolId: ${self:provider.environment.USER_POOL_ID} 
-        LambdaConfig:
-          PreSignUp: !GetAtt PreSignUpLambdaFunction.Arn
+  AttachPreSignUpLambda:
+    Type: AWS::Cognito::UserPoolLambdaAttachment
+    Properties:
+      UserPoolId: ${self:provider.environment.USER_POOL_ID}
+      PreSignUp: !GetAtt PreSignUpLambdaFunction.Arn
   PermissionsPreSignUpLambdaInvoke:
     Type: AWS::Lambda::Permission
     Properties:

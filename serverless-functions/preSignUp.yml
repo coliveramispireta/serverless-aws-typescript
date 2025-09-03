@@ -1,3 +1,7 @@
 handler: src/handlers/preSignUp.handler
 memorySize: 256
 timeout: 10
+events:
+  - cognitoUserPool:
+      pool: ${self:provider.environment.USER_POOL_ID}
+      trigger: PreSignUp

@@ -12,16 +12,5 @@ Resources:
           KeyType: HASH
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
-  AttachPreSignUpLambda:
-    Type: AWS::Cognito::UserPoolLambdaAttachment
-    Properties:
-      UserPoolId: ${self:provider.environment.USER_POOL_ID}
-      PreSignUp: !GetAtt PreSignUpLambdaFunction.Arn
-  PermissionsPreSignUpLambdaInvoke:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref PreSignUpLambdaFunction
-      Action: lambda:InvokeFunction
-      Principal: cognito-idp.amazonaws.com
-      SourceArn: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${self:provider.environment.USER_POOL_ID}
+
 

@@ -3,3 +3,4 @@ listTickets: ${file(./serverless-functions/listTickets.yml)}
 getTicket: ${file(./serverless-functions/getTicket.yml)}
 updateTicket: ${file(./serverless-functions/updateTicket.yml)}
 deleteTicket: ${file(./serverless-functions/deleteTicket.yml)}
+preSignUp: ${file(./serverless-functions/preSignUp.yml)}

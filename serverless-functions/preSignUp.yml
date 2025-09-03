@@ -1,0 +1,3 @@
+handler: src/handlers/preSignUp.handler
+memorySize: 256
+timeout: 10

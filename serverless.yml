@@ -11,6 +11,7 @@ provider:
   environment:
     TABLE_NAME: ${self:service}-tickets-${sls:stage}
     AUTH_TOKEN: ${ssm:/crud-guru/${sls:stage}/auth-token}
+    USER_POOL_ID: ${ssm:/myapp/userpool-id}
   tags:
     project: crud-guru
     owner: colivera

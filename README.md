@@ -214,6 +214,19 @@ Esta Lambda se ejecuta como **trigger PreSignUp** en Amazon Cognito y tiene la s
 
 ---
 
+## Husky y Lint-Staged
+
+Este proyecto usa **Husky** para ejecutar validaciones antes de cada commit.  
+Es decir, al hacer un commit se dispara el hook `pre-commit`, ejecutando los siguientes comandos:
+
+```bash
+npx lint-staged  # → corre ESLint y Prettier solo en los archivos modificados.
+npm test # → ejecuta los tests unitarios con Jest.
+```
+
+Si los tests fallan o hay errores de lint/format, el commit no se ejecuta.  
+De esta forma se asegura que no entren commits con errores de formato o tests fallidos al repositorio.
+
 ## CI/CD (GitHub Actions)
 
 La integración continua y despliegue automático se realiza mediante **GitHub Actions**.

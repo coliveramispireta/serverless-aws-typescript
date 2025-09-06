@@ -126,8 +126,6 @@ SERVERLESS_ACCESS_KEY
 
 ---
 
----
-
 # Endpoints CRUD
 
 ## Todos los endpoints requieren el header de autorización:

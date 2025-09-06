@@ -67,6 +67,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     console.log("Saving item to DynamoDB:", { ...item, price: "***" });
     await ddb.send(new PutCommand({ TableName: TABLE, Item: item }));
 
+    //  RESPUESTA
     return response(201, item);
   } catch (err) {
     console.error("Internal error:", err);

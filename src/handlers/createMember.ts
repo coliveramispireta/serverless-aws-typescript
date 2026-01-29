@@ -9,6 +9,7 @@ const requiredFields: (keyof Omit<Participante, "id" | "createdAt" | "updatedAt"
   "email",
   "nombreCompleto",
   "edad",
+  "pesoInicial",
   "pesoActual",
   "sexo",
   "talla",
@@ -38,6 +39,15 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Missing fields", fields: missingFields });
     }
 
+    const pesoInicial = Number(body.pesoInicial);
+    const pesoActual = Number(body.pesoActual);
+
+    if (pesoInicial !== pesoActual) {
+      return response(400, {
+        message: "pesoInicial must be equal to pesoActual on registration",
+      });
+    }
+
     const now = new Date().toISOString();
 
     const item: Participante = {
@@ -45,6 +55,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       email: body.email,
       nombreCompleto: body.nombreCompleto,
       edad: Number(body.edad),
+      pesoInicial: Number(body.pesoInicial),
       pesoActual: Number(body.pesoActual),
       sexo: body.sexo,
       talla: Number(body.talla),

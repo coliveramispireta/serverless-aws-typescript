@@ -1,9 +1,9 @@
-// interfaces/Participante.ts
 export interface Participante {
   id: string;
   email: string;
   nombreCompleto: string;
   edad: number;
+  pesoInicial: number;
   pesoActual: number;
   sexo: string;
   talla: number;

@@ -1,0 +1,21 @@
+handler: src/handlers/createMember.handler
+memorySize: 128
+timeout: 5
+events:
+  - http:
+      path: members
+      method: post
+      cors:
+        origin: "*"
+        headers:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+        allowCredentials: false
+        methods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE

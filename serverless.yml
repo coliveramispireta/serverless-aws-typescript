@@ -11,6 +11,7 @@ provider:
   environment:
     TABLE_NAME: ${self:service}-tickets-${sls:stage}
     MEMBERS_TABLE: ${self:service}-members-${sls:stage}
+    PAYMENTS_TABLE: ${self:service}-payments-${sls:stage}
     AUTH_TOKEN: ${ssm:/crud-guru/${sls:stage}/auth-token}
     USER_POOL_ID: ${ssm:/myapp/userpool-id}
     USER_POOL_NAME: ${ssm:/myapp/userpool-name}
@@ -37,6 +38,7 @@ provider:
           Resource: 
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.MEMBERS_TABLE}
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.PAYMENTS_TABLE}
 
 plugins:
   - serverless-offline

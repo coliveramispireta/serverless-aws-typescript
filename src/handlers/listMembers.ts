@@ -4,7 +4,7 @@ import { ddb } from "../lib/dynamo";
 import { response } from "../helpers/response";
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  const TABLE = process.env.TABLE_NAME!;
+  const TABLE = process.env.MEMBERS_TABLE!;
   const AUTH_TOKEN = process.env.AUTH_TOKEN!;
 
   try {

@@ -10,6 +10,7 @@ provider:
   region: ${opt:region, 'us-east-1'}
   environment:
     TABLE_NAME: ${self:service}-tickets-${sls:stage}
+    MEMBERS_TABLE: ${self:service}-members-${sls:stage}
     AUTH_TOKEN: ${ssm:/crud-guru/${sls:stage}/auth-token}
     USER_POOL_ID: ${ssm:/myapp/userpool-id}
     USER_POOL_NAME: ${ssm:/myapp/userpool-name}
@@ -33,7 +34,9 @@ provider:
             - dynamodb:DeleteItem
             - dynamodb:Scan
             - dynamodb:Query
-          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
+          Resource: 
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.MEMBERS_TABLE}
 
 plugins:
   - serverless-offline

@@ -3,7 +3,7 @@ memorySize: 128
 timeout: 5
 events:
   - http:
-      path: weights/{id}
+      path: weights/{weightId}
       method: delete
       authorizer:
         name: cognito-keto-auth

@@ -8,7 +8,7 @@ export default [
     languageOptions: {
       parser: eslintParserTs,
       parserOptions: {
-        project: "./tsconfig.json",
+        project: ["./tsconfig.json", "./tsconfig.test.json"],
         sourceType: "module",
       },
     },

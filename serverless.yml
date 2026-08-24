@@ -15,6 +15,20 @@ provider:
     AUTH_TOKEN: ${ssm:/crud-guru/${sls:stage}/auth-token}
     USER_POOL_ID: ${ssm:/myapp/userpool-id}
     USER_POOL_NAME: ${ssm:/myapp/userpool-name}
+    # ---------- KetoCoach ----------
+    KETO_USERS_TABLE: ${self:service}-keto-users-${sls:stage}
+    KETO_WEIGHTS_TABLE: ${self:service}-keto-weights-${sls:stage}
+    KETO_MEALS_TABLE: ${self:service}-keto-meals-${sls:stage}
+    KETO_RECIPES_TABLE: ${self:service}-keto-recipes-${sls:stage}
+    KETO_POSTS_TABLE: ${self:service}-keto-posts-${sls:stage}
+    KETO_COMMENTS_TABLE: ${self:service}-keto-comments-${sls:stage}
+    KETO_CHAT_TABLE: ${self:service}-keto-chat-${sls:stage}
+    KETO_ACHIEVEMENTS_TABLE: ${self:service}-keto-achievements-${sls:stage}
+    KETO_ENGAGEMENT_TABLE: ${self:service}-keto-engagement-${sls:stage}
+    EVIDENCES_BUCKET: ${self:service}-evidencias-${sls:stage}
+    ALLOWED_ORIGINS: "https://d2exyey26zrqxx.cloudfront.net,https://d3rhci7cyrcaj3.cloudfront.net,http://localhost:3000"
+    # Lista de correos coach (separados por coma). Si el parámetro no existe aún, queda vacío.
+    COACH_EMAILS: ${ssm:/ketocoach/${sls:stage}/coach-emails, ''}
   tags:
     project: crud-guru
     owner: colivera
@@ -39,6 +53,24 @@ provider:
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.TABLE_NAME}
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.MEMBERS_TABLE}
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.PAYMENTS_TABLE}
+        # KetoCoach: acceso a las tablas nuevas (prefijo común) e índices GSI
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+            - dynamodb:Query
+          Resource:
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-keto-*
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-keto-*/index/*
+        # KetoCoach: evidencias fotográficas en S3 privado
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource: arn:aws:s3:::${self:provider.environment.EVIDENCES_BUCKET}/*
 
 plugins:
   - serverless-offline
@@ -47,4 +79,6 @@ package:
   individually: true
 
 functions: ${file(./serverless-functions/index.yml)}
-resources: ${file(./serverless-resources/dynamodb.yml)}
+resources:
+  - ${file(./serverless-resources/dynamodb.yml)}
+  - ${file(./serverless-resources/s3.yml)}

@@ -1,0 +1,25 @@
+﻿handler: src/handlers/keto/listComments.handler
+memorySize: 128
+timeout: 5
+events:
+  - http:
+      path: posts/{postId}/comments
+      method: get
+      authorizer:
+        name: cognito-keto-auth
+        type: COGNITO_USER_POOLS
+        arn: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
+      cors:
+        origin: "*"
+        headers:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+        allowCredentials: false
+        methods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE

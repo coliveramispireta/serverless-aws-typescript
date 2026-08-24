@@ -4,6 +4,7 @@ import { response } from "../../helpers/response";
 import { getAuth, isCoach } from "../../helpers/auth";
 import { putItem, T } from "../../data/ketoRepo";
 import { EngagementItem } from "../../interfaces/keto";
+import { sendPushToUser } from "../../helpers/push";
 
 /**
  * POST /recommendations — solo coach.
@@ -46,6 +47,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
 
     await putItem(T.engagement(), item as unknown as Record<string, unknown>);
+
+    // 🔔 Push solo si es dirigida a un usuario (las del grupo no notifican para no saturar)
+    if (item.destinatario !== "GROUP") {
+      await sendPushToUser(item.destinatario, {
+        title: "📋 Recomendación de tu coach",
+        body: item.texto.slice(0, 80),
+        url: "/inicio",
+      });
+    }
+
     return response(201, item, origin);
   } catch (err) {
     console.error("createRecommendation error:", err);

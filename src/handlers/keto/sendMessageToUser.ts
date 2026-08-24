@@ -4,6 +4,7 @@ import { response } from "../../helpers/response";
 import { getAuth, isCoach } from "../../helpers/auth";
 import { putItem, T } from "../../data/ketoRepo";
 import { EngagementItem } from "../../interfaces/keto";
+import { sendPushToUser } from "../../helpers/push";
 
 /**
  * POST /messages — solo coach. Mensaje personalizado a un usuario.
@@ -42,6 +43,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
 
     await putItem(T.engagement(), item as unknown as Record<string, unknown>);
+
+    // 🔔 Push al destinatario
+    await sendPushToUser(item.destinatario, {
+      title: "👤 Mensaje de tu coach",
+      body: item.texto.slice(0, 80),
+      url: "/inicio",
+    });
+
     return response(201, item, origin);
   } catch (err) {
     console.error("sendMessageToUser error:", err);

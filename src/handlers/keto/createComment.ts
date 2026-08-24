@@ -4,6 +4,7 @@ import { response } from "../../helpers/response";
 import { getAuth } from "../../helpers/auth";
 import { getItem, putItem, T } from "../../data/ketoRepo";
 import { CommentItem, KetoUserProfile } from "../../interfaces/keto";
+import { sendPushToUser } from "../../helpers/push";
 
 /** POST /posts/{postId}/comments — comentar una publicación */
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -28,7 +29,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
 
     // Verificar que el post exista
-    const post = await getItem<{ postId: string }>(T.posts(), { postId });
+    const post = await getItem<{ postId: string; userId?: string }>(T.posts(), { postId });
     if (!post) return response(404, { message: "Post not found" }, origin);
 
     const now = new Date().toISOString();
@@ -51,6 +52,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
 
     await putItem(T.comments(), comment as unknown as Record<string, unknown>);
+
+    // 🔔 Push al dueño del post (no autonotificarse)
+    if (post.userId && post.userId !== auth.userId) {
+      await sendPushToUser(post.userId, {
+        title: "💬 Nuevo comentario",
+        body: `${autorNombre} comentó tu publicación: ${comment.texto.slice(0, 70)}`,
+        url: "/comunidad",
+      });
+    }
+
     return response(201, comment, origin);
   } catch (err) {
     console.error("createComment error:", err);

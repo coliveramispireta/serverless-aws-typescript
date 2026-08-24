@@ -23,6 +23,7 @@ export const T = {
   chat: () => process.env.KETO_CHAT_TABLE!,
   achievements: () => process.env.KETO_ACHIEVEMENTS_TABLE!,
   engagement: () => process.env.KETO_ENGAGEMENT_TABLE!,
+  pushsubs: () => process.env.KETO_PUSHSUBS_TABLE!,
 };
 
 export async function putItem<T extends Record<string, unknown>>(

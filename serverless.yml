@@ -25,10 +25,16 @@ provider:
     KETO_CHAT_TABLE: ${self:service}-keto-chat-${sls:stage}
     KETO_ACHIEVEMENTS_TABLE: ${self:service}-keto-achievements-${sls:stage}
     KETO_ENGAGEMENT_TABLE: ${self:service}-keto-engagement-${sls:stage}
+    KETO_PUSHSUBS_TABLE: ${self:service}-keto-pushsubs-${sls:stage}
     EVIDENCES_BUCKET: ${self:service}-evidencias-${sls:stage}
     ALLOWED_ORIGINS: "https://d2exyey26zrqxx.cloudfront.net,https://d3rhci7cyrcaj3.cloudfront.net,http://localhost:3000"
     # Lista de correos coach (separados por coma). Si el parámetro no existe aún, queda vacío.
     COACH_EMAILS: ${ssm:/ketocoach/${sls:stage}/coach-emails, ''}
+    # Web Push (VAPID). Si los parámetros no existen aún, las notificaciones quedan
+    # en modo silencioso y el deploy no falla.
+    VAPID_PUBLIC_KEY: ${ssm:/ketocoach/${sls:stage}/vapid-public, ''}
+    VAPID_PRIVATE_KEY: ${ssm:/ketocoach/${sls:stage}/vapid-private, ''}
+    VAPID_SUBJECT: mailto:contacto@ketoflow.app
   tags:
     project: crud-guru
     owner: colivera

@@ -47,7 +47,6 @@ describe("coachListUsers Lambda (KetoCoach)", () => {
 
     const { context, callback } = setup();
     const event = createAuthEvent({ userId: "coach-1", email: "coach@test.com" });
-
     const result = (await coachListUsersHandler(event, context, callback)) as APIGatewayProxyResult;
     const body = JSON.parse(result.body);
 

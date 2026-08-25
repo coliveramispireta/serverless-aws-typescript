@@ -64,7 +64,8 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
           await webpush.sendNotification(
             { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh!, auth: sub.auth! } },
             JSON.stringify(payload),
-            { TTL: 86400 },
+            // Urgency high → importancia alta en Android → banner flotante (heads-up)
+            { TTL: 86400, headers: { Urgency: "high" } },
           );
         } catch (err) {
           // Suscripción muerta (usuario borró permiso/desinstaló): limpiar

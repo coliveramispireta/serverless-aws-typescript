@@ -41,6 +41,37 @@ const BIENVENIDA_DE_VUELTA: PushMessage[] = [
 ];
 
 // ---------------------------------------------------------
+// 👋 Vuelve pronto (dispositivos con sesión cerrada, 2x/día)
+// ---------------------------------------------------------
+const VUELVE_PRONTO: PushMessage[] = [
+  {
+    title: "🎯 Tus metas te esperan",
+    body: "Recuerda que tus metas esperan por ti. Queremos apoyarte en tu camino. ¡Vuelve pronto!",
+  },
+  {
+    title: "💚 Te extrañamos",
+    body: "Tu sesión está cerrada, ábrela y sigue sumando. Estamos contigo.",
+  },
+  {
+    title: "👋 Vuelve pronto",
+    body: "Tu coach dejó mensajitos de ánimo para ti. Ábrela cuando puedas.",
+  },
+  { title: "🔥 No pares ahora", body: "El progreso que construiste sigue intacto. Retómalo hoy." },
+  {
+    title: "🌱 Un minuto basta",
+    body: "Abre la app y registra tu peso o tu comida de hoy. Pequeño pero poderoso.",
+  },
+  { title: "💪 Sigue tu camino", body: "Cada día cuenta. Tu comunidad ya extraña verte por aquí." },
+  {
+    title: "⏰ Recordatorio amable",
+    body: "Tu sesión está cerrada. Ábrela y mantén vivo tu avance.",
+  },
+  { title: "✨ Queremos verte", body: "Un pequeño paso hoy vale oro. ¡Te esperamos!" },
+  { title: "🤗 Aquí seguimos", body: "Con ánimo, recordatorios y cariño de tu coach. ¡Ábrela!" },
+  { title: "🚀 Retoma el rumbo", body: "Tus metas no se mueven solas: nos vemos dentro." },
+];
+
+// ---------------------------------------------------------
 // 😢 Re-encuentro (usuario inactivo varios días)
 // ---------------------------------------------------------
 const REENCUENTRO: PushMessage[] = [
@@ -285,6 +316,11 @@ export function randomBienvenidaDeVuelta(): PushMessage {
 /** Mensaje para usuarios inactivos varios días (≥4 días sin registrar) */
 export function randomReencuentro(): PushMessage {
   return pickRandom(REENCUENTRO);
+}
+
+/** Mensaje "vuelve pronto" para dispositivos con sesión cerrada (2x/día) */
+export function randomVuelvePronto(): PushMessage {
+  return pickRandom(VUELVE_PRONTO);
 }
 
 /**

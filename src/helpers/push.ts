@@ -50,8 +50,10 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
       new QueryCommand({
         TableName: SUBS_TABLE(),
         KeyConditionExpression: "#u = :uid",
-        ExpressionAttributeNames: { "#u": "userId" },
-        ExpressionAttributeValues: { ":uid": userId },
+        // Excluir dispositivos en modo invitado (sesión cerrada): solo cronGuestMoments les habla
+        FilterExpression: "attribute_not_exists(#est) OR #est <> :inv",
+        ExpressionAttributeNames: { "#u": "userId", "#est": "estado" },
+        ExpressionAttributeValues: { ":uid": userId, ":inv": "invitado" },
       }),
     );
 

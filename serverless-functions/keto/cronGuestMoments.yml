@@ -1,0 +1,15 @@
+handler: src/handlers/keto/cronGuestMoments.handler
+memorySize: 128
+timeout: 60
+events:
+  # ---- Horarios en UTC (hora local del usuario = UTC-5) ----
+  - schedule:
+      rate: cron(0 14 * * ? *)
+      enabled: true
+      name: ketoflow-guest-am-${sls:stage}
+      description: Vuelve pronto manana 09:00 local
+  - schedule:
+      rate: cron(0 21 * * ? *)
+      enabled: true
+      name: ketoflow-guest-pm-${sls:stage}
+      description: Vuelve pronto tarde 16:00 local

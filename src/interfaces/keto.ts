@@ -61,7 +61,8 @@ export interface PostItem {
   autorNombre: string;
   autorFotoUrl?: string;
   texto: string;
-  imagenUrl?: string;
+  imagenKey?: string; // clave S3 (flyers del coach)
+  imagenUrl?: string; // URL externa o firmada generada al leer
   logroId?: string;
   createdAt: string;
 }

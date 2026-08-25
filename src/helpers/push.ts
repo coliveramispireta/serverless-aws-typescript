@@ -1,5 +1,5 @@
 import webpush from "web-push";
-import { QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, DeleteCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb } from "../lib/dynamo";
 
 /**
@@ -86,5 +86,26 @@ export async function sendPushToUser(userId: string, payload: PushPayload): Prom
     );
   } catch (err) {
     console.error("sendPushToUser error:", err);
+  }
+}
+
+/** 🔔 Envía una notificación a TODOS los usuarios suscritos (ej. flyer del coach). */
+export async function sendPushToAll(payload: PushPayload): Promise<void> {
+  if (!ensureConfigured()) return;
+
+  try {
+    const result = await ddb.send(
+      new ScanCommand({
+        TableName: SUBS_TABLE(),
+        ProjectionExpression: "userId",
+      }),
+    );
+    const items = (result.Items as { userId: string }[] | undefined) ?? [];
+    const userIds = [...new Set(items.map((i) => i.userId))];
+    console.log(`sendPushToAll: ${userIds.length} destinatarios`);
+
+    await Promise.all(userIds.map((uid) => sendPushToUser(uid, payload).catch(() => undefined)));
+  } catch (err) {
+    console.error("sendPushToAll error:", err);
   }
 }

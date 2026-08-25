@@ -1,9 +1,10 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { v4 as uuidv4 } from "uuid";
 import { response } from "../../helpers/response";
-import { getAuth } from "../../helpers/auth";
+import { getAuth, isCoach } from "../../helpers/auth";
 import { getItem, putItem, T } from "../../data/ketoRepo";
 import { PostItem, KetoUserProfile } from "../../interfaces/keto";
+import { sendPushToAll } from "../../helpers/push";
 
 /** POST /posts — nueva publicación en el feed del grupo */
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -42,11 +43,23 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       autorFotoUrl: profile?.fotoUrl,
       texto: String(body.texto).trim().slice(0, 2000),
       imagenUrl: body.imagenUrl ? String(body.imagenUrl) : undefined,
+      imagenKey: body.imagenKey ? String(body.imagenKey) : undefined,
       logroId: body.logroId ? String(body.logroId) : undefined,
       createdAt: now,
     };
 
     await putItem(T.posts(), post as unknown as Record<string, unknown>);
+
+    // 🔔 Solo los posts del COACH notifican a todos (flyers/anuncios).
+    // Los posts de usuarios no generan broadcast (anti-spam).
+    if (isCoach(auth)) {
+      await sendPushToAll({
+        title: "📣 El coach publicó",
+        body: post.texto.length > 0 ? post.texto.slice(0, 80) : "Nuevo flyer en la comunidad",
+        url: "/comunidad",
+      });
+    }
+
     return response(201, post, origin);
   } catch (err) {
     console.error("createPost error:", err);

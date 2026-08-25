@@ -21,6 +21,7 @@ listAchievements: ${file(./serverless-functions/keto/listAchievements.yml)}
 shareAchievement: ${file(./serverless-functions/keto/shareAchievement.yml)}
 listPosts: ${file(./serverless-functions/keto/listPosts.yml)}
 createPost: ${file(./serverless-functions/keto/createPost.yml)}
+createPostMediaUrl: ${file(./serverless-functions/keto/createPostMediaUrl.yml)}
 listComments: ${file(./serverless-functions/keto/listComments.yml)}
 createComment: ${file(./serverless-functions/keto/createComment.yml)}
 listChatMessages: ${file(./serverless-functions/keto/listChatMessages.yml)}

@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 import { response } from "../../helpers/response";
 import { getAuth } from "../../helpers/auth";
 import { queryGsi, T } from "../../data/ketoRepo";
+import { presignDownload } from "../../helpers/s3";
 import { PostItem } from "../../interfaces/keto";
 
 /** GET /posts — feed global (más recientes primero, máx. 50) */
@@ -15,7 +16,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       limit: 50,
       ascending: false,
     });
-    return response(200, posts, origin);
+
+    // Firmar las imágenes almacenadas en S3 (flyers) para que sean visibles
+    const withImages = await Promise.all(
+      posts.map(async (p) => ({
+        ...p,
+        imagenUrl: p.imagenKey ? await presignDownload(p.imagenKey) : p.imagenUrl,
+      })),
+    );
+
+    return response(200, withImages, origin);
   } catch (err) {
     console.error("listPosts error:", err);
     return response(500, { message: "Internal server error" }, origin);

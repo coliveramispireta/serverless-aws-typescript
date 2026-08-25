@@ -2,16 +2,15 @@ import { QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { ddb } from "../lib/dynamo";
 import { sendPushToUser } from "./push";
 import {
+  MomentKinds,
   PushMessage,
-  randomHydration,
-  randomMotivation,
+  pickMessageForKinds,
   randomReencuentro,
-  randomWeekend,
 } from "./motivationalpools";
 
 /**
  * Motor de recordatorios automáticos.
- * Compartido por las 3 Lambdas programadas (EventBridge cron).
+ * Compartido por la Lambda programada cronMoments (EventBridge cron).
  */
 
 const SUBS_TABLE = () => process.env.KETO_PUSHSUBS_TABLE!;
@@ -22,16 +21,29 @@ const DAY_MS = 1000 * 60 * 60 * 24;
 /** Días sin registrar para considerar al usuario "desaparecido" */
 export const INACTIVO_DESDE_DIAS = 4;
 
-/** IDs únicos de usuarios con notificaciones activas */
+interface SubRow {
+  userId: string;
+  endpoint: string;
+  createdAt?: string;
+}
+
+/**
+ * IDs únicos de usuarios con notificaciones activas.
+ * Un endpoint (dispositivo) debe recibir UN solo push aunque esté registrado
+ * bajo varios usuarios: gana el registro más reciente (evita pushes dobles).
+ */
 async function allSubscriberIds(): Promise<string[]> {
-  const result = await ddb.send(
-    new ScanCommand({
-      TableName: SUBS_TABLE(),
-      ProjectionExpression: "userId",
-    }),
-  );
-  const items = (result.Items as { userId: string }[] | undefined) ?? [];
-  return [...new Set(items.map((i) => i.userId))];
+  const result = await ddb.send(new ScanCommand({ TableName: SUBS_TABLE() }));
+  const items = (result.Items as SubRow[] | undefined) ?? [];
+
+  const ownerByEndpoint = new Map<string, { userId: string; createdAt: string }>();
+  for (const it of items) {
+    const prev = ownerByEndpoint.get(it.endpoint);
+    if (!prev || (it.createdAt ?? "") > prev.createdAt) {
+      ownerByEndpoint.set(it.endpoint, { userId: it.userId, createdAt: it.createdAt ?? "" });
+    }
+  }
+  return [...new Set([...ownerByEndpoint.values()].map((v) => v.userId))];
 }
 
 /** Fecha (ISO) del último registro del usuario, o null si nunca */
@@ -76,32 +88,20 @@ function isInactive(lastDate: string | null): boolean {
   return Date.now() - new Date(lastDate).getTime() >= INACTIVO_DESDE_DIAS * DAY_MS;
 }
 
-type PoolKind = "motivacion" | "hidratacion" | "weekend";
-
-function pickMessage(kind: PoolKind): PushMessage {
-  switch (kind) {
-    case "motivacion":
-      return randomMotivation();
-    case "hidratacion":
-      return randomHydration();
-    case "weekend":
-      return randomWeekend();
-  }
-}
-
 /**
- * Envía a todos los suscriptores el mensaje del tipo indicado,
- * sustituyéndolo por un mensaje de re-encuentro si el usuario está inactivo.
+ * Envía a todos los suscriptores el mensaje del momento indicado.
+ * `kinds` son los enfoques candidatos del horario (elige 1 al azar).
+ * Sustituye el mensaje por re-encuentro si el usuario está inactivo.
  */
-export async function broadcastDaily(kind: PoolKind): Promise<void> {
+export async function broadcastDaily(kinds: MomentKinds[]): Promise<void> {
   const userIds = await allSubscriberIds();
-  console.log(`broadcastDaily(${kind}): ${userIds.length} suscriptores`);
+  console.log(`broadcastDaily(${kinds.join("/")}): ${userIds.length} suscriptores`);
 
   await Promise.all(
     userIds.map(async (userId) => {
       try {
         const lastDate = await lastActivityDate(userId);
-        const message = isInactive(lastDate) ? randomReencuentro() : pickMessage(kind);
+        const message = isInactive(lastDate) ? randomReencuentro() : pickMessageForKinds(kinds);
         await sendPushToUser(userId, message);
       } catch (err) {
         console.error(`broadcast a ${userId} falló:`, err);

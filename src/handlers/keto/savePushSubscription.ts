@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { response } from "../../helpers/response";
 import { getAuth } from "../../helpers/auth";
-import { putItem, T } from "../../data/ketoRepo";
+import { getItem, putItem, updateItemFields, deleteEndpointOtherUsers, T } from "../../data/ketoRepo";
 import { sendPushToUser } from "../../helpers/push";
 import { welcomeMessage } from "../../helpers/motivationalpools";
 
@@ -10,8 +10,9 @@ import { welcomeMessage } from "../../helpers/motivationalpools";
  * Guarda/actualiza la suscripción Web Push de un dispositivo del usuario.
  * Body: { endpoint, keys: { p256dh, auth }, plataforma? }
  *
- * Al guardar, envía inmediatamente el push de BIENVENIDA:
- * sirve de prueba end-to-end de que las notificaciones funcionan.
+ * Al guardar por PRIMERA VEZ (sin flag welcomeSentAt en el perfil),
+ * envía inmediatamente el push de BIENVENIDA. Los siguientes inicios
+ * de sesión los saluda el endpoint /notifications/session-open.
  */
 export const handler: APIGatewayProxyHandler = async (event) => {
   const origin = event.headers?.Origin || event.headers?.origin;
@@ -36,6 +37,9 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (missing.length > 0)
       return response(400, { message: "Missing fields", fields: missing }, origin);
 
+    // Un dispositivo = un dueño: limpiar el mismo endpoint registrado a otros usuarios
+    await deleteEndpointOtherUsers(auth.userId, endpoint);
+
     await putItem(T.pushsubs(), {
       userId: auth.userId,
       endpoint,
@@ -45,9 +49,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       createdAt: new Date().toISOString(),
     });
 
-    // 🔔 Push de bienvenida inmediato (prueba end-to-end del sistema)
+    // 🔔 Push de bienvenida SOLO la primera vez (flag welcomeSentAt en el perfil).
+    // El body { motivo: "prueba" } lo reenvía siempre (botón 🧪 del perfil).
     try {
-      await sendPushToUser(auth.userId, welcomeMessage());
+      const esPrueba = String(body.motivo ?? "") === "prueba";
+      const profile = await getItem<{ welcomeSentAt?: string }>(T.users(), {
+        userId: auth.userId,
+      });
+      if (esPrueba || !profile?.welcomeSentAt) {
+        await sendPushToUser(auth.userId, welcomeMessage());
+        if (!esPrueba) {
+          await updateItemFields(T.users(), { userId: auth.userId }, {
+            welcomeSentAt: new Date().toISOString(),
+          });
+        }
+      }
     } catch (pushErr) {
       console.warn("welcome push falló:", pushErr);
     }

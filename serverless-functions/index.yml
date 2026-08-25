@@ -34,7 +34,6 @@ coachListUsers: ${file(./serverless-functions/keto/coachListUsers.yml)}
 coachUserProgress: ${file(./serverless-functions/keto/coachUserProgress.yml)}
 savePushSubscription: ${file(./serverless-functions/keto/savePushSubscription.yml)}
 deletePushSubscription: ${file(./serverless-functions/keto/deletePushSubscription.yml)}
+sessionOpen: ${file(./serverless-functions/keto/sessionOpen.yml)}
 # ---------------- Recordatorios automáticos (EventBridge cron) ----------------
-cronDailyMotivation: ${file(./serverless-functions/keto/cronDailyMotivation.yml)}
-cronHydration: ${file(./serverless-functions/keto/cronHydration.yml)}
-cronWeekendGuard: ${file(./serverless-functions/keto/cronWeekendGuard.yml)}
+cronMoments: ${file(./serverless-functions/keto/cronMoments.yml)}

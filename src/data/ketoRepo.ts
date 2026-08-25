@@ -106,6 +106,34 @@ export async function queryGsi<T>(
   return (result.Items as T[]) ?? [];
 }
 
+/**
+ * Un dispositivo (endpoint) solo puede pertenecer a UN usuario.
+ * Elimina registros del mismo endpoint bajo otros userIds para evitar
+ * pushes dobles cuando la misma persona inicia sesión con varias cuentas.
+ */
+export async function deleteEndpointOtherUsers(userId: string, endpoint: string): Promise<void> {
+  const result = await ddb.send(
+    new ScanCommand({
+      TableName: T.pushsubs(),
+      FilterExpression: "#ep = :ep AND #u <> :uid",
+      ExpressionAttributeNames: { "#ep": "endpoint", "#u": "userId" },
+      ExpressionAttributeValues: { ":ep": endpoint, ":uid": userId },
+      ProjectionExpression: "userId, endpoint",
+    }),
+  );
+  const rows = (result.Items as { userId: string; endpoint: string }[] | undefined) ?? [];
+  for (const row of rows) {
+    await ddb
+      .send(
+        new DeleteCommand({
+          TableName: T.pushsubs(),
+          Key: { userId: row.userId, endpoint: row.endpoint },
+        }),
+      )
+      .catch(() => undefined);
+  }
+}
+
 export interface UpdateFields {
   [attr: string]: number | string | undefined;
 }

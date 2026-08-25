@@ -1,0 +1,50 @@
+handler: src/handlers/keto/cronMoments.handler
+memorySize: 128
+timeout: 60
+events:
+  # ---- Horarios en UTC (hora local del usuario = UTC-5) ----
+  - schedule:
+      rate: cron(0 14 * * ? *)
+      enabled: true
+      name: ketoflow-slot-0900-${sls:stage}
+      description: Animo/amor propio 09:00 local
+  - schedule:
+      rate: cron(0 16 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1100-${sls:stage}
+      description: Reflexion/metas 11:00 local
+  - schedule:
+      rate: cron(30 17 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1230-${sls:stage}
+      description: Alerta/antojos 12:30 local
+  - schedule:
+      rate: cron(0 19 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1400-${sls:stage}
+      description: Hidratacion 14:00 local
+  - schedule:
+      rate: cron(0 21 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1600-${sls:stage}
+      description: Orgullo/metas 16:00 local
+  - schedule:
+      rate: cron(0 23 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1800-${sls:stage}
+      description: Antojos/alerta 18:00 local
+  - schedule:
+      rate: cron(30 0 * * ? *)
+      enabled: true
+      name: ketoflow-slot-1930-${sls:stage}
+      description: Fe y espiritualidad 19:30 local
+  - schedule:
+      rate: cron(0 2 * * ? *)
+      enabled: true
+      name: ketoflow-slot-2100-${sls:stage}
+      description: Transformacion 21:00 local
+  - schedule:
+      rate: cron(0 22 ? * FRI *)
+      enabled: true
+      name: ketoflow-slot-weekend-${sls:stage}
+      description: Guardia fin de semana viernes 17:00 local

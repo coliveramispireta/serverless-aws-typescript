@@ -77,6 +77,11 @@ provider:
             - s3:PutObject
             - s3:GetObject
           Resource: arn:aws:s3:::${self:provider.environment.EVIDENCES_BUCKET}/*
+        # PreSignUp federado (Google): verificar si la cuenta ya existe en el pool
+        - Effect: Allow
+          Action:
+            - cognito-idp:ListUsers
+          Resource: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
 
 plugins:
   - serverless-esbuild

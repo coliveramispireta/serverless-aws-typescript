@@ -79,7 +79,23 @@ provider:
           Resource: arn:aws:s3:::${self:provider.environment.EVIDENCES_BUCKET}/*
 
 plugins:
+  - serverless-esbuild
   - serverless-offline
+
+# Empaquetado con esbuild. `format: cjs` es CRÍTICO: web-push (CommonJS) hace
+# require("crypto") y en bundles ESM eso rompe la Lambda en INIT con
+# "Dynamic require of crypto is not supported".
+#
+# SF v4 trae soporte esbuild nativo que entra en conflicto con el plugin:
+# se desactiva explícitamente para usar el plugin de la comunidad.
+build:
+  esbuild: false
+
+custom:
+  esbuild:
+    target: node20
+    format: cjs
+    sourcemap: true
 
 package:
   individually: true

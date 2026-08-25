@@ -2,11 +2,16 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 import { response } from "../../helpers/response";
 import { getAuth } from "../../helpers/auth";
 import { putItem, T } from "../../data/ketoRepo";
+import { sendPushToUser } from "../../helpers/push";
+import { welcomeMessage } from "../../helpers/motivationalpools";
 
 /**
  * POST /notifications/subscriptions
  * Guarda/actualiza la suscripción Web Push de un dispositivo del usuario.
  * Body: { endpoint, keys: { p256dh, auth }, plataforma? }
+ *
+ * Al guardar, envía inmediatamente el push de BIENVENIDA:
+ * sirve de prueba end-to-end de que las notificaciones funcionan.
  */
 export const handler: APIGatewayProxyHandler = async (event) => {
   const origin = event.headers?.Origin || event.headers?.origin;
@@ -39,6 +44,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       plataforma: body.plataforma ? String(body.plataforma).slice(0, 40) : undefined,
       createdAt: new Date().toISOString(),
     });
+
+    // 🔔 Push de bienvenida inmediato (prueba end-to-end del sistema)
+    try {
+      await sendPushToUser(auth.userId, welcomeMessage());
+    } catch (pushErr) {
+      console.warn("welcome push falló:", pushErr);
+    }
 
     return response(201, { message: "Subscribed", endpoint }, origin);
   } catch (err) {

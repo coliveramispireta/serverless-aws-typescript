@@ -1,12 +1,7 @@
-createTicket: ${file(./serverless-functions/createTicket.yml)}
 createPayment: ${file(./serverless-functions/createPayment.yml)}
 createMember: ${file(./serverless-functions/createMember.yml)}
-listTickets: ${file(./serverless-functions/listTickets.yml)}
 listMembers: ${file(./serverless-functions/listMembers.yml)}
 listPayments: ${file(./serverless-functions/listPayments.yml)}
-getTicket: ${file(./serverless-functions/getTicket.yml)}
-updateTicket: ${file(./serverless-functions/updateTicket.yml)}
-deleteTicket: ${file(./serverless-functions/deleteTicket.yml)}
 preSignUp: ${file(./serverless-functions/preSignUp.yml)}
 # ---------------- KetoCoach ----------------
 listMeals: ${file(./serverless-functions/keto/listMeals.yml)}
@@ -38,3 +33,7 @@ coachListUsers: ${file(./serverless-functions/keto/coachListUsers.yml)}
 coachUserProgress: ${file(./serverless-functions/keto/coachUserProgress.yml)}
 savePushSubscription: ${file(./serverless-functions/keto/savePushSubscription.yml)}
 deletePushSubscription: ${file(./serverless-functions/keto/deletePushSubscription.yml)}
+# ---------------- Recordatorios automáticos (EventBridge cron) ----------------
+cronDailyMotivation: ${file(./serverless-functions/keto/cronDailyMotivation.yml)}
+cronHydration: ${file(./serverless-functions/keto/cronHydration.yml)}
+cronWeekendGuard: ${file(./serverless-functions/keto/cronWeekendGuard.yml)}

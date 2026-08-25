@@ -4,7 +4,6 @@
   "description": "CRUD API con AWS Lambda, API Gateway y DynamoDB usando Serverless Framework",
   "type": "module",
   "scripts": {
-    "prepare": "husky && husky install",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
@@ -14,12 +13,6 @@
     "deploy:dev": "npx serverless deploy --stage dev --region us-east-1",
     "deploy:prod": "npx serverless deploy --stage prod --region us-east-1",
     "remove:dev": "npx serverless remove --stage dev --region us-east-1"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,json,md}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
   },
   "jest": {
     "preset": "ts-jest",
@@ -58,9 +51,7 @@
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "husky": "^8.0.0",
     "jest": "^30.1.1",
-    "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "serverless-offline": "^14.4.0",
     "ts-jest": "^29.4.1",

@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "KetoFlowManageEventBridgeSchedules",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutRule",
+        "events:DescribeRule",
+        "events:DeleteRule",
+        "events:PutTargets",
+        "events:RemoveTargets",
+        "events:DisableRule",
+        "events:EnableRule",
+        "events:ListRules",
+        "events:ListTargetsByRule"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

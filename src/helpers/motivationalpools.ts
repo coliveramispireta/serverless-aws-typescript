@@ -95,6 +95,10 @@ const ANIMO: PushMessage[] = [
   { title: "🧱 Ladrillo a ladrillo", body: "Hoy construyes el cuerpo del mañana." },
   { title: "😤 Cuando cueste", body: "Ahí es justo donde se progresa. No pares." },
   { title: "☀️ Decisión", body: "Hoy no dependes de las ganas: dependes de ti." },
+  {
+    title: "💪 Temple",
+    body: "¡Mañana estarás orgulloso/a de tu temple de hoy! ¡Esto es serio!",
+  },
 ];
 
 // ---------------------------------------------------------
@@ -111,6 +115,10 @@ const AMORPROPIO: PushMessage[] = [
   { title: "🌷 Cuidarte es amor", body: "Cada comida sana es un abrazo para tu cuerpo." },
   { title: "🫂 Constante > perfecto", body: "No tienes que ser perfecto/a, solo no rendirte." },
   { title: "💗 Tu valor", body: "No depende de un número en la báscula. Nunca lo olvides." },
+  {
+    title: "🤍 Mi promesa",
+    body: "¡No me estoy castigando! Estoy cumpliendo mi promesa a mí mismo/a.",
+  },
 ];
 
 // ---------------------------------------------------------
@@ -175,6 +183,10 @@ const ANTOJOS: PushMessage[] = [
   { title: "🚿 Truco viejo", body: "Cepíllate los dientes o ducha rápida fría: matagotos infalible." },
   { title: "🍗 Proteína y adiós", body: "Un snack proteico calma el antojo sin sabotear tu avance." },
   { title: "🎭 Disfraz", body: "El antojo se disfraza de hambre. No compres la entrada." },
+  {
+    title: "🎯 Hoy me elijo",
+    body: "¡Hoy me estoy eligiendo! Mi objetivo es más importante que este antojo.",
+  },
 ];
 
 // ---------------------------------------------------------

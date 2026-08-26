@@ -44,6 +44,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      # Fuente única de coaches (GitHub secret) → SSM que leen las lambdas.
+      # Debe correr ANTES del deploy: serverless inyecta COACH_EMAILS al empaquetar.
+      - name: Sync coach emails to SSM
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/master" ]; then
+            STAGE=prod
+          else
+            STAGE=dev
+          fi
+          aws ssm put-parameter \
+            --name "/ketocoach/$STAGE/coach-emails" \
+            --type String \
+            --value "${{ secrets.COACH_EMAILS }}" \
+            --overwrite
+
       - name: Deploy with Serverless
         run: |
           if [ "${{ github.ref }}" == "refs/heads/master" ]; then

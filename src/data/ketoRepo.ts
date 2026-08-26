@@ -5,6 +5,7 @@ import {
   ScanCommand,
   DeleteCommand,
   UpdateCommand,
+  BatchWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { ddb } from "../lib/dynamo";
 
@@ -163,4 +164,25 @@ export async function updateItemFields(
       ExpressionAttributeValues: values,
     }),
   );
+}
+
+/**
+ * Escritura masiva en DynamoDB. Divide en chunks de 25 (límite de BatchWriteItem).
+ * No es transaccional — si un chunk falla parcialmente, se lanza el error.
+ */
+export async function batchPutItems<T extends Record<string, unknown>>(
+  table: string,
+  items: T[],
+): Promise<void> {
+  const BATCH_SIZE = 25;
+  for (let i = 0; i < items.length; i += BATCH_SIZE) {
+    const chunk = items.slice(i, i + BATCH_SIZE);
+    await ddb.send(
+      new BatchWriteCommand({
+        RequestItems: {
+          [table]: chunk.map((item) => ({ PutRequest: { Item: item } })),
+        },
+      }),
+    );
+  }
 }

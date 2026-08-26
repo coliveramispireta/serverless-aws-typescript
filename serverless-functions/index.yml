@@ -34,6 +34,7 @@ coachListUsers: ${file(./serverless-functions/keto/coachListUsers.yml)}
 coachUserProgress: ${file(./serverless-functions/keto/coachUserProgress.yml)}
 coachToggleUserDisabled: ${file(./serverless-functions/keto/coachToggleUserDisabled.yml)}
 coachDeleteUser: ${file(./serverless-functions/keto/coachDeleteUser.yml)}
+coachBulkImport: ${file(./serverless-functions/keto/coachBulkImport.yml)}
 savePushSubscription: ${file(./serverless-functions/keto/savePushSubscription.yml)}
 deletePushSubscription: ${file(./serverless-functions/keto/deletePushSubscription.yml)}
 markSubscriptionGuest: ${file(./serverless-functions/keto/markSubscriptionGuest.yml)}

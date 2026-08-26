@@ -7,6 +7,14 @@ preSignUp: ${file(./serverless-functions/preSignUp.yml)}
 listMeals: ${file(./serverless-functions/keto/listMeals.yml)}
 createMeal: ${file(./serverless-functions/keto/createMeal.yml)}
 deleteMeal: ${file(./serverless-functions/keto/deleteMeal.yml)}
+createMealBlock: ${file(./serverless-functions/keto/createMealBlock.yml)}
+listFoods: ${file(./serverless-functions/keto/listFoods.yml)}
+createFood: ${file(./serverless-functions/keto/createFood.yml)}
+deleteFood: ${file(./serverless-functions/keto/deleteFood.yml)}
+seedFoods: ${file(./serverless-functions/keto/seedFoods.yml)}
+createLiquid: ${file(./serverless-functions/keto/createLiquid.yml)}
+listLiquids: ${file(./serverless-functions/keto/listLiquids.yml)}
+deleteLiquid: ${file(./serverless-functions/keto/deleteLiquid.yml)}
 listWeights: ${file(./serverless-functions/keto/listWeights.yml)}
 createWeight: ${file(./serverless-functions/keto/createWeight.yml)}
 deleteWeight: ${file(./serverless-functions/keto/deleteWeight.yml)}

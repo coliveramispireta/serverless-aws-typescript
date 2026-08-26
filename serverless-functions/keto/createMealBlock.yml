@@ -1,0 +1,26 @@
+handler: src/handlers/keto/createMealBlock.handler
+memorySize: 256
+timeout: 15
+events:
+  - http:
+      path: meals/block
+      method: post
+      authorizer:
+        name: cognito-keto-auth
+        type: COGNITO_USER_POOLS
+        arn: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
+      cors:
+        origin: "*"
+        headers:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+        allowCredentials: false
+        methods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH

@@ -25,6 +25,8 @@ export const T = {
   achievements: () => process.env.KETO_ACHIEVEMENTS_TABLE!,
   engagement: () => process.env.KETO_ENGAGEMENT_TABLE!,
   pushsubs: () => process.env.KETO_PUSHSUBS_TABLE!,
+  foods: () => process.env.KETO_FOODS_TABLE!,
+  liquids: () => process.env.KETO_LIQUIDS_TABLE!,
 };
 
 export async function putItem<T extends Record<string, unknown>>(

@@ -26,6 +26,8 @@ provider:
     KETO_ACHIEVEMENTS_TABLE: ${self:service}-keto-achievements-${sls:stage}
     KETO_ENGAGEMENT_TABLE: ${self:service}-keto-engagement-${sls:stage}
     KETO_PUSHSUBS_TABLE: ${self:service}-keto-pushsubs-${sls:stage}
+    KETO_FOODS_TABLE: ${self:service}-keto-foods-${sls:stage}
+    KETO_LIQUIDS_TABLE: ${self:service}-keto-liquids-${sls:stage}
     EVIDENCES_BUCKET: ${self:service}-evidencias-${sls:stage}
     ALLOWED_ORIGINS: "https://d2exyey26zrqxx.cloudfront.net,https://d3rhci7cyrcaj3.cloudfront.net,http://localhost:3000"
     # Lista de correos coach (separados por coma). Si el parámetro no existe aún, queda vacío.

@@ -113,3 +113,32 @@ export interface EngagementItem {
   createdByUserId: string;
   createdByEmail: string;
 }
+
+// ─── Catálogo de alimentos ────────────────────────────────────
+
+export type FoodUnit = "g" | "und" | "ml";
+export type FoodCategory =
+  | "proteina"
+  | "verdura"
+  | "grasa"
+  | "lacteo"
+  | "fruto_seco"
+  | "semilla"
+  | "otro";
+
+export interface FoodItem {
+  foodId: string;
+  nombre: string;
+  unidad: FoodUnit;
+  equivalenciaGramos?: number; // para "und": cuántos gramos equivale 1 unidad
+  categoria?: FoodCategory;
+}
+
+// ─── Líquidos ────────────────────────────────────────────────
+
+export interface LiquidItem {
+  id: string;
+  userId: string; // PK
+  fechaHora: string; // SK (ISO)
+  cantidadMl: number;
+}

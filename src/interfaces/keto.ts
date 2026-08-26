@@ -11,6 +11,7 @@ export interface KetoUserProfile {
   alturaCm?: number;
   pesoObjetivoKg?: number;
   fechaInicio?: string;
+  disabled?: boolean;
   createdAt: string;
   updatedAt: string;
 }

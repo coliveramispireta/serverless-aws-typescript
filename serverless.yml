@@ -82,6 +82,14 @@ provider:
           Action:
             - cognito-idp:ListUsers
           Resource: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
+        # Coach admin: gestionar usuarios (deshabilitar/habilitar/eliminar)
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminDisableUser
+            - cognito-idp:AdminEnableUser
+            - cognito-idp:AdminDeleteUser
+            - cognito-idp:AdminGetUser
+          Resource: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
 
 plugins:
   - serverless-esbuild

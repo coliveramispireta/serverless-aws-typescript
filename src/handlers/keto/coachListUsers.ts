@@ -17,6 +17,7 @@ export interface CoachUserSummaryItem {
   perdidaTotalKg?: number;
   ultimoRegistro?: string;
   diasSinRegistrar?: number;
+  disabled?: boolean;
 }
 
 /**
@@ -74,12 +75,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
               : undefined,
           ultimoRegistro,
           diasSinRegistrar,
+          disabled: u.disabled ?? false,
         };
       }),
     );
 
-    // Usuarios con más días sin registrar primero (prioridad de seguimiento)
-    summaries.sort((a, b) => (b.diasSinRegistrar ?? -1) - (a.diasSinRegistrar ?? -1));
+    // Usuarios deshabilitados al final, entre los activos los de más días sin registrar primero
+    summaries.sort((a, b) => {
+      if (a.disabled !== b.disabled) return a.disabled ? 1 : -1;
+      return (b.diasSinRegistrar ?? -1) - (a.diasSinRegistrar ?? -1);
+    });
 
     return response(200, summaries, origin);
   } catch (err) {

@@ -135,7 +135,7 @@ export async function deleteEndpointOtherUsers(userId: string, endpoint: string)
 }
 
 export interface UpdateFields {
-  [attr: string]: number | string | undefined;
+  [attr: string]: number | string | boolean | undefined;
 }
 
 /** Actualiza campos planos sobre una clave arbitraria */

@@ -7,7 +7,8 @@ import {
 import { DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { response } from "../../helpers/response";
 import { getAuth, isCoach } from "../../helpers/auth";
-import { getItem, queryByUser, scanTable, T, ddb } from "../../data/ketoRepo";
+import { getItem, queryByUser, T } from "../../data/ketoRepo";
+import { ddb } from "../../lib/dynamo";
 import {
   AchievementItem,
   KetoUserProfile,

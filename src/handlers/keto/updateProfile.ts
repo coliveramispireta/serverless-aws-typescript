@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 import { response } from "../../helpers/response";
 import { getAuth } from "../../helpers/auth";
 import { hasValue } from "../../helpers/values";
-import { getItem, updateItemFields, T } from "../../data/ketoRepo";
+import { UpdateFields, getItem, updateItemFields, T } from "../../data/ketoRepo";
 import { KetoUserProfile } from "../../interfaces/keto";
 
 /** PUT /profile — Actualiza altura, peso objetivo y nombre. Solo campos permitidos. */
@@ -20,7 +20,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Invalid JSON" }, origin);
     }
 
-    const fields: Record<string, number | string> = {};
+    const fields: UpdateFields = {};
     if (hasValue(body.alturaCm)) {
       const v = Number(body.alturaCm);
       if (Number.isNaN(v) || v < 100 || v > 250)
@@ -36,8 +36,15 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (body.nombre && typeof body.nombre === "string") {
       fields.nombre = body.nombre.trim().slice(0, 80);
     }
+    if (typeof body.onboardingDone === "boolean") {
+      fields.onboardingDone = body.onboardingDone;
+    }
 
-    if (Object.keys(fields).length === 0 && !("alturaCm" in body)) {
+    if (
+      Object.keys(fields).length === 0 &&
+      !("alturaCm" in body) &&
+      !("onboardingDone" in body)
+    ) {
       return response(400, { message: "Nada que actualizar" }, origin);
     }
 

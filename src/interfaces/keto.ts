@@ -12,6 +12,8 @@ export interface KetoUserProfile {
   pesoObjetivoKg?: number;
   fechaInicio?: string;
   disabled?: boolean;
+  /** true cuando el usuario completó (u omitió) el onboarding de bienvenida */
+  onboardingDone?: boolean;
   createdAt: string;
   updatedAt: string;
 }

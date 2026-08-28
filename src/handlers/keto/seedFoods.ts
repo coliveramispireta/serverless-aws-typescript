@@ -60,6 +60,30 @@ const SEED_FOODS: Omit<FoodItem, "foodId">[] = [
   // Semillas
   { nombre: "Chía", unidad: "g", categoria: "semilla" },
   { nombre: "Linaza", unidad: "g", categoria: "semilla" },
+  // Alimentos no KETO (altos en carbohidratos)
+  { nombre: "Pan blanco", unidad: "g", categoria: "no_keto" },
+  { nombre: "Pan francés", unidad: "g", categoria: "no_keto" },
+  { nombre: "Pan de molde", unidad: "g", categoria: "no_keto" },
+  { nombre: "Petipán", unidad: "und", equivalenciaGramos: 60, categoria: "no_keto" },
+  { nombre: "Tortilla de trigo", unidad: "und", equivalenciaGramos: 30, categoria: "no_keto" },
+  { nombre: "Oblea de arroz", unidad: "und", equivalenciaGramos: 10, categoria: "no_keto" },
+  { nombre: "Arroz blanco", unidad: "g", categoria: "no_keto" },
+  { nombre: "Fideos", unidad: "g", categoria: "no_keto" },
+  { nombre: "Papa", unidad: "g", categoria: "no_keto" },
+  { nombre: "Camote", unidad: "g", categoria: "no_keto" },
+  { nombre: "Yuca", unidad: "g", categoria: "no_keto" },
+  { nombre: "Choclo", unidad: "und", equivalenciaGramos: 200, categoria: "no_keto" },
+  { nombre: "Cancha", unidad: "g", categoria: "no_keto" },
+  { nombre: "Azúcar", unidad: "g", categoria: "no_keto" },
+  { nombre: "Miel", unidad: "g", categoria: "no_keto" },
+  { nombre: "Gaseosa", unidad: "ml", categoria: "no_keto" },
+  { nombre: "Cerveza", unidad: "ml", categoria: "no_keto" },
+  { nombre: "Jugo de frutas con azúcar", unidad: "ml", categoria: "no_keto" },
+  { nombre: "Helado", unidad: "g", categoria: "no_keto" },
+  { nombre: "Galletas", unidad: "g", categoria: "no_keto" },
+  { nombre: "Torta", unidad: "g", categoria: "no_keto" },
+  { nombre: "Pan de hamburguesa", unidad: "und", equivalenciaGramos: 70, categoria: "no_keto" },
+  { nombre: "Pan de hot dog", unidad: "und", equivalenciaGramos: 60, categoria: "no_keto" },
 ];
 
 /**

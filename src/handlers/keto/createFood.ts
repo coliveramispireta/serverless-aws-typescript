@@ -27,10 +27,25 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     const nombre = body.nombre ? String(body.nombre).trim() : "";
     const unidad = body.unidad ? String(body.unidad).trim() : "";
+    const categoria = body.categoria ? String(body.categoria).trim() : "";
 
     if (!nombre) return response(400, { message: "Missing nombre" }, origin);
     if (!["g", "und", "ml"].includes(unidad)) {
       return response(400, { message: "unidad debe ser 'g', 'und' o 'ml'" }, origin);
+    }
+
+    const VALID_CATEGORIES: FoodCategory[] = [
+      "proteina",
+      "verdura",
+      "grasa",
+      "lacteo",
+      "fruto_seco",
+      "semilla",
+      "otro",
+      "no_keto",
+    ];
+    if (categoria && !VALID_CATEGORIES.includes(categoria as FoodCategory)) {
+      return response(400, { message: "categoria inválida" }, origin);
     }
 
     const food: FoodItem = {
@@ -38,7 +53,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       nombre,
       unidad: unidad as "g" | "und" | "ml",
       equivalenciaGramos: body.equivalenciaGramos != null ? Number(body.equivalenciaGramos) : undefined,
-      categoria: body.categoria ? (String(body.categoria) as FoodCategory) : undefined,
+      categoria: categoria ? (categoria as FoodCategory) : undefined,
     };
 
     await putItem(T.foods(), food as unknown as Record<string, unknown>);

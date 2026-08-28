@@ -21,8 +21,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Invalid JSON" }, origin);
     }
 
-    if (!body.texto || typeof body.texto !== "string" || !body.texto.trim()) {
-      return response(400, { message: "Missing fields", fields: ["texto"] }, origin);
+    const texto = body.texto && typeof body.texto === "string" ? String(body.texto).trim() : "";
+    const tieneImagen = Boolean(body.imagenKey || body.imagenUrl);
+    if (!texto && !tieneImagen) {
+      return response(400, { message: "Se requiere texto o imagen" }, origin);
     }
 
     const now = new Date().toISOString();
@@ -41,7 +43,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       userId: auth.userId,
       autorNombre,
       autorFotoUrl: profile?.fotoUrl,
-      texto: String(body.texto).trim().slice(0, 2000),
+      texto: texto.slice(0, 2000),
       imagenUrl: body.imagenUrl ? String(body.imagenUrl) : undefined,
       imagenKey: body.imagenKey ? String(body.imagenKey) : undefined,
       logroId: body.logroId ? String(body.logroId) : undefined,

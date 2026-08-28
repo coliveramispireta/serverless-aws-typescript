@@ -5,6 +5,7 @@ import { getAuth, isCoach } from "../../helpers/auth";
 import { getItem, batchPutItems, T } from "../../data/ketoRepo";
 import {
   KetoUserProfile,
+  LiquidItem,
   MealEntryItem,
   MealType,
   WeightEntryItem,
@@ -17,10 +18,11 @@ const VALID_MEAL_TYPES: MealType[] = ["desayuno", "almuerzo", "cena", "snack"];
  * Body: {
  *   userId: string,
  *   weights: Array<{ fechaHora, pesoKg, nota? }>,
- *   meals: Array<{ fechaHora, alimento, gramos, comedy?, nota? }>
+ *   meals: Array<{ fechaHora, alimento, gramos, comida?, nota? }>,
+ *   liquids: Array<{ fechaHora, cantidadMl, nota? }>
  * }
  *
- * Importa datos retroactivos de un usuario en batch.
+ * Importa datos retroactivos de un usuario en batch (pesos, comidas y líquidos).
  * Solo coach. Todo o nada: si falla algo, no se escribe nada.
  */
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -67,9 +69,25 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     // Parsear arrays
     const rawWeights = Array.isArray(body.weights) ? body.weights : [];
     const rawMeals = Array.isArray(body.meals) ? body.meals : [];
+    const rawLiquids = Array.isArray(body.liquids) ? body.liquids : [];
 
-    if (rawWeights.length === 0 && rawMeals.length === 0) {
-      return response(400, { message: "No hay datos para importar (weights y meals vacíos)" }, origin);
+    if (rawWeights.length === 0 && rawMeals.length === 0 && rawLiquids.length === 0) {
+      return response(
+        400,
+        { message: "No hay datos para importar (weights, meals y liquids vacíos)" },
+        origin,
+      );
+    }
+
+    // Validación básica de líquidos (mismas reglas que createLiquid)
+    for (const l of rawLiquids as Record<string, unknown>[]) {
+      const ml = Number(l.cantidadMl);
+      if (Number.isNaN(ml) || ml <= 0 || ml > 10000) {
+        return response(400, { message: "cantidadMl inválida (1–10000)" }, origin);
+      }
+      if (l.nota && String(l.nota).length > 200) {
+        return response(400, { message: "nota excede 200 caracteres" }, origin);
+      }
     }
 
     // ─── Construir items de pesos ───
@@ -98,10 +116,22 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       }),
     );
 
+    // ─── Construir items de líquidos ───
+    const liquidItems: LiquidItem[] = rawLiquids.map(
+      (l: Record<string, unknown>) => ({
+        id: uuidv4(),
+        userId: targetUserId,
+        fechaHora: new Date(String(l.fechaHora)).toISOString(),
+        cantidadMl: Number(l.cantidadMl),
+        nota: l.nota ? String(l.nota) : undefined,
+      }),
+    );
+
     // ─── Escritura batch (todo o nada a nivel de chunk) ───
-    const results = await Promise.all([
+    await Promise.all([
       weightItems.length > 0 ? batchPutItems(T.weights(), weightItems as unknown as Record<string, unknown>[]) : Promise.resolve(),
       mealItems.length > 0 ? batchPutItems(T.meals(), mealItems as unknown as Record<string, unknown>[]) : Promise.resolve(),
+      liquidItems.length > 0 ? batchPutItems(T.liquids(), liquidItems as unknown as Record<string, unknown>[]) : Promise.resolve(),
     ]);
 
     return response(
@@ -110,6 +140,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         imported: {
           weights: weightItems.length,
           meals: mealItems.length,
+          liquids: liquidItems.length,
         },
       },
       origin,

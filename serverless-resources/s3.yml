@@ -8,6 +8,20 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      # CORS para subidas directas desde el navegador (presigned URLs PUT de
+      # flyers y evidencias de báscula). El bucket sigue siendo privado: solo
+      # operan las URLs prefirmadas.
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - HEAD
+            AllowedHeaders:
+              - "*"
+            MaxAgeSeconds: 3000
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:

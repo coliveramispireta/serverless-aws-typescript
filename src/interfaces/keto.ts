@@ -38,6 +38,7 @@ export interface MealEntryItem {
   gramos: number;
   comida?: MealType;
   carbohidratosNetos?: number;
+  categoria?: FoodCategory;
   nota?: string;
 }
 

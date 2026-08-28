@@ -93,6 +93,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         alimento: food.nombre,
         gramos,
         comida: comida || undefined,
+        categoria: food.categoria,
       };
 
       mealItems.push(meal);

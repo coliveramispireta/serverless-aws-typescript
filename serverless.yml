@@ -86,12 +86,14 @@ provider:
             - cognito-idp:ListUsers
           Resource: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
         # Coach admin: gestionar usuarios (deshabilitar/habilitar/eliminar)
+        # + trigger PostAuthentication (auto-link Google -> cuenta nativa)
         - Effect: Allow
           Action:
             - cognito-idp:AdminDisableUser
             - cognito-idp:AdminEnableUser
             - cognito-idp:AdminDeleteUser
             - cognito-idp:AdminGetUser
+            - cognito-idp:AdminLinkProviderForUser
           Resource: arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/${ssm:/myapp/userpool-id}
 
 plugins:

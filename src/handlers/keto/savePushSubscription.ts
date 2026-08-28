@@ -4,6 +4,7 @@ import { getAuth } from "../../helpers/auth";
 import { getItem, putItem, updateItemFields, deleteEndpointOtherUsers, T } from "../../data/ketoRepo";
 import { sendPushToUser } from "../../helpers/push";
 import { welcomeMessage } from "../../helpers/motivationalpools";
+import { ensureUserProfile } from "../../helpers/ensureProfile";
 
 /**
  * POST /notifications/subscriptions
@@ -59,6 +60,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       if (esPrueba || !profile?.welcomeSentAt) {
         await sendPushToUser(auth.userId, welcomeMessage());
         if (!esPrueba) {
+          // Nunca escribir el perfil con UpdateItem sin que exista completo:
+          // UpdateItem en DynamoDB crearía el item automáticamente con solo
+          // welcomeSentAt (el "usuario en blanco"). Ensure garantiza email/nombre.
+          await ensureUserProfile(event, auth);
           await updateItemFields(T.users(), { userId: auth.userId }, {
             welcomeSentAt: new Date().toISOString(),
           });

@@ -1,6 +1,6 @@
 handler: src/handlers/keto/coachBulkImport.handler
 memorySize: 256
-timeout: 30
+timeout: 28
 events:
   - http:
       path: coach/bulk-import

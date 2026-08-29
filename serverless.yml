@@ -118,6 +118,8 @@ custom:
 package:
   individually: true
 
+frameworkVersion: ~4.41.1
+
 functions: ${file(./serverless-functions/index.yml)}
 resources:
   - ${file(./serverless-resources/dynamodb.yml)}

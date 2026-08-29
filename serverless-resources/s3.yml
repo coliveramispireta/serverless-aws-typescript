@@ -21,7 +21,6 @@ Resources:
               - HEAD
             AllowedHeaders:
               - "*"
-            MaxAgeSeconds: 3000
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:

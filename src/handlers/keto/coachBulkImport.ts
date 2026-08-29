@@ -46,11 +46,6 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Missing userId" }, origin);
     }
 
-    // No puede importar datos a su propia cuenta
-    if (targetUserId === auth.userId) {
-      return response(400, { message: "No puedes importar datos a tu propia cuenta" }, origin);
-    }
-
     // Verificar que el usuario exista
     const targetProfile = await getItem<KetoUserProfile>(T.users(), { userId: targetUserId });
     if (!targetProfile) {

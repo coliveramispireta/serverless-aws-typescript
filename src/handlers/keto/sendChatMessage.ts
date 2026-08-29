@@ -44,7 +44,18 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
 
     await putItem(T.chat(), message as unknown as Record<string, unknown>);
-    return response(201, message, origin);
+
+    // DTO para el frontend (id/autorUserId/fechaEnvio)
+    const dto = {
+      id: message.messageId,
+      autorUserId: message.userId,
+      autorNombre: message.autorNombre,
+      autorFotoUrl: message.autorFotoUrl,
+      texto: message.texto,
+      fechaEnvio: message.sentAt,
+    };
+
+    return response(201, dto, origin);
   } catch (err) {
     console.error("sendChatMessage error:", err);
     return response(500, { message: "Internal server error" }, origin);

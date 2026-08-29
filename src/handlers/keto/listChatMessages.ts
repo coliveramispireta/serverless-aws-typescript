@@ -15,9 +15,20 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       limit: 100,
       ascending: false,
     });
-    // Se devuelven en orden cronológico para pintar directo en el front
-    messages.reverse();
-    return response(200, messages, origin);
+
+    // DTO para el frontend (id/autorUserId/fechaEnvio), en orden cronológico
+    const dto = messages
+      .map((m) => ({
+        id: m.messageId,
+        autorUserId: m.userId,
+        autorNombre: m.autorNombre,
+        autorFotoUrl: m.autorFotoUrl,
+        texto: m.texto,
+        fechaEnvio: m.sentAt,
+      }))
+      .reverse();
+
+    return response(200, dto, origin);
   } catch (err) {
     console.error("listChatMessages error:", err);
     return response(500, { message: "Internal server error" }, origin);

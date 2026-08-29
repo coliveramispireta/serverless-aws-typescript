@@ -62,7 +62,18 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       });
     }
 
-    return response(201, comment, origin);
+    // DTO para el frontend (id/autorUserId/fechaCreacion)
+    const dto = {
+      id: comment.commentId,
+      postId: comment.postId,
+      autorUserId: comment.userId,
+      autorNombre: comment.autorNombre,
+      autorFotoUrl: comment.autorFotoUrl,
+      texto: comment.texto,
+      fechaCreacion: comment.createdAt,
+    };
+
+    return response(201, dto, origin);
   } catch (err) {
     console.error("createComment error:", err);
     return response(500, { message: "Internal server error" }, origin);

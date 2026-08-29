@@ -18,7 +18,19 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       ascending: true,
       limit: 100,
     });
-    return response(200, comments, origin);
+
+    // DTO para el frontend: id/autorUserId/fechaCreacion
+    const dto = comments.map((c) => ({
+      id: c.commentId,
+      postId: c.postId,
+      autorUserId: c.userId,
+      autorNombre: c.autorNombre,
+      autorFotoUrl: c.autorFotoUrl,
+      texto: c.texto,
+      fechaCreacion: c.createdAt,
+    }));
+
+    return response(200, dto, origin);
   } catch (err) {
     console.error("listComments error:", err);
     return response(500, { message: "Internal server error" }, origin);

@@ -17,15 +17,22 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       ascending: false,
     });
 
-    // Firmar las imágenes almacenadas en S3 (flyers) para que sean visibles
-    const withImages = await Promise.all(
+    // DTO para el frontend: id/fechaCreacion/autorUserId + firma de imágenes S3.
+    const dto = await Promise.all(
       posts.map(async (p) => ({
-        ...p,
+        id: p.postId,
+        autorUserId: p.userId,
+        autorNombre: p.autorNombre,
+        autorFotoUrl: p.autorFotoUrl,
+        texto: p.texto,
         imagenUrl: p.imagenKey ? await presignDownload(p.imagenKey) : p.imagenUrl,
+        imagenKey: p.imagenKey,
+        logroId: p.logroId,
+        fechaCreacion: p.createdAt,
       })),
     );
 
-    return response(200, withImages, origin);
+    return response(200, dto, origin);
   } catch (err) {
     console.error("listPosts error:", err);
     return response(500, { message: "Internal server error" }, origin);

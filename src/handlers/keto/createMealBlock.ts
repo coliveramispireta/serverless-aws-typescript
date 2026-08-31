@@ -13,6 +13,7 @@ const VALID_MEAL_TYPES: MealType[] = ["desayuno", "almuerzo", "cena", "snack"];
  * Body: {
  *   fechaHora: string,          // ISO datetime
  *   comida: MealType,           // desayuno | almuerzo | cena | snack
+ *   nota?: string,              // nota opcional del bloque
  *   alimentos: Array<{
  *     foodId: string,
  *     cantidad: number,
@@ -45,6 +46,15 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const comida = body.comida as MealType | undefined;
     if (comida && !VALID_MEAL_TYPES.includes(comida)) {
       return response(400, { message: "comida inválida" }, origin);
+    }
+
+    // nota opcional del bloque
+    let nota: string | undefined;
+    if (body.nota !== undefined && body.nota !== null && String(body.nota).trim() !== "") {
+      nota = String(body.nota).trim();
+      if (nota.length > 200) {
+        return response(400, { message: "nota excede 200 caracteres" }, origin);
+      }
     }
 
     const alimentos = Array.isArray(body.alimentos) ? body.alimentos : [];
@@ -94,6 +104,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         gramos,
         comida: comida || undefined,
         categoria: food.categoria,
+        nota,
       };
 
       mealItems.push(meal);

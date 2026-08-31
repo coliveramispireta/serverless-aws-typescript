@@ -52,12 +52,15 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(404, { message: "Usuario no encontrado" }, origin);
     }
 
-    // Verificar que el target no sea coach
+    // Verificar que el target no sea OTRO coach (a tu propia cuenta sí se permite)
     const coachEmails = (process.env.COACH_EMAILS ?? "")
       .split(",")
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean);
-    if (coachEmails.includes(targetProfile.email.toLowerCase())) {
+    if (
+      targetUserId !== auth.userId &&
+      coachEmails.includes(targetProfile.email.toLowerCase())
+    ) {
       return response(400, { message: "No puedes importar datos a otro coach" }, origin);
     }
 

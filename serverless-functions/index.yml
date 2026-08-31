@@ -12,6 +12,7 @@ listFoods: ${file(./serverless-functions/keto/listFoods.yml)}
 createFood: ${file(./serverless-functions/keto/createFood.yml)}
 deleteFood: ${file(./serverless-functions/keto/deleteFood.yml)}
 seedFoods: ${file(./serverless-functions/keto/seedFoods.yml)}
+userImport: ${file(./serverless-functions/keto/userImport.yml)}
 createLiquid: ${file(./serverless-functions/keto/createLiquid.yml)}
 listLiquids: ${file(./serverless-functions/keto/listLiquids.yml)}
 deleteLiquid: ${file(./serverless-functions/keto/deleteLiquid.yml)}

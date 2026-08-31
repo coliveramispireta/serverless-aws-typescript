@@ -3,7 +3,107 @@ import { v4 as uuidv4 } from "uuid";
 import { response } from "../../helpers/response";
 import { getAuth, isCoach } from "../../helpers/auth";
 import { scanTable, batchPutItems, T } from "../../data/ketoRepo";
-import { FoodItem } from "../../interfaces/keto";
+import { FoodItem, FoodCategory } from "../../interfaces/keto";
+
+/**
+ * Emoji por defecto de cada categoría (para completar alimentos sin emoji).
+ */
+const CATEGORY_DEFAULT_EMOJI: Record<FoodCategory, string> = {
+  proteina: "🥩",
+  verdura: "🥬",
+  grasa: "🥑",
+  lacteo: "🧀",
+  fruto_seco: "🥜",
+  semilla: "🌱",
+  otro: "🍽️",
+  no_keto: "⚠️",
+};
+
+/**
+ * Emoji específico por nombre para alimentos conocidos que no lo tengan.
+ * Solo se usa sobre alimentos cuyo campo `emoji` está vacío/ausente.
+ */
+const NAME_EMOJI: Record<string, string> = {
+  "carne de res": "🥩",
+  bistec: "🥩",
+  "carne molida": "🥩",
+  "lomo de res": "🥩",
+  cerdo: "🐷",
+  "lomo de cerdo": "🐷",
+  "chuleta de cerdo": "🐷",
+  chicharrón: "🍖",
+  "piel de cerdo": "🍖",
+  pollo: "🍗",
+  "pechuga de pollo": "🍗",
+  "muslo de pollo": "🍗",
+  pescado: "🐟",
+  atún: "🐟",
+  salmón: "🍣",
+  sardina: "🐟",
+  mariscos: "🦐",
+  huevo: "🥚",
+  "queso fresco": "🧀",
+  "queso mozzarella": "🧀",
+  "queso parmesano": "🧀",
+  "queso tipo amarillo": "🧀",
+  mantequilla: "🧈",
+  palta: "🥑",
+  "aceitunas verdes": "🫒",
+  "aceitunas negras": "🫒",
+  lechuga: "🥬",
+  espinaca: "🥬",
+  brócoli: "🥦",
+  coliflor: "🥦",
+  pepino: "🥒",
+  zucchini: "🥒",
+  apio: "🥬",
+  espárragos: "🌱",
+  champiñones: "🍄",
+  tomate: "🍅",
+  cebolla: "🧅",
+  pimiento: "🫑",
+  almendras: "🥜",
+  nueces: "🌰",
+  pecanas: "🌰",
+  maní: "🥜",
+  macadamias: "🌰",
+  chía: "🌱",
+  linaza: "🌱",
+  "pan blanco": "🍞",
+  "pan francés": "🥖",
+  "pan de molde": "🍞",
+  petipán: "🍞",
+  "tortilla de trigo": "🌮",
+  "oblea de arroz": "🍘",
+  "arroz blanco": "🍚",
+  fideos: "🍜",
+  papa: "🥔",
+  camote: "🍠",
+  yuca: "🥔",
+  choclo: "🌽",
+  cancha: "🌽",
+  azúcar: "🍬",
+  miel: "🍯",
+  gaseosa: "🥤",
+  cerveza: "🍺",
+  "jugo de frutas con azúcar": "🧃",
+  helado: "🍨",
+  galletas: "🍪",
+  torta: "🍰",
+  "pan de hamburguesa": "🍔",
+  "pan de hot dog": "🌭",
+};
+
+/**
+ * Resuelve el emoji de un alimento: el propio si lo tiene, si no el específico
+ * por nombre, y como último recurso el de su categoría.
+ */
+function resolveEmoji(nombre: string, categoria?: FoodCategory, emoji?: string): string | undefined {
+  if (emoji) return emoji;
+  const byName = NAME_EMOJI[nombre.toLowerCase().trim()];
+  if (byName) return byName;
+  return categoria ? CATEGORY_DEFAULT_EMOJI[categoria] : undefined;
+}
 
 /**
  * Datos iniciales del catálogo de alimentos keto.
@@ -88,7 +188,10 @@ const SEED_FOODS: Omit<FoodItem, "foodId">[] = [
 
 /**
  * POST /foods/seed — insertar catálogo inicial (solo coach).
- * Solo inserta alimentos que no existan (por nombre).
+ * Es idempotente: solo inserta alimentos que no existan (por nombre) y,
+ * además, completa el campo `emoji` de los alimentos existentes que no lo
+ * tengan (por nombre o por categoría), para que la grilla visual del diálogo
+ * de comida no muestre el plato genérico.
  */
 export const handler: APIGatewayProxyHandler = async (event) => {
   const origin = event.headers?.Origin || event.headers?.origin;
@@ -108,13 +211,30 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       foodId: uuidv4(),
     }));
 
-    if (toInsert.length === 0) {
-      return response(200, { message: "El catálogo ya está poblado", inserted: 0 }, origin);
+    if (toInsert.length > 0) {
+      await batchPutItems(T.foods(), toInsert as unknown as Record<string, unknown>[]);
     }
 
-    await batchPutItems(T.foods(), toInsert as unknown as Record<string, unknown>[]);
+    // Completar emojis de alimentos existentes que no lo tienen
+    let updatedEmojis = 0;
+    const toUpdate: FoodItem[] = [];
+    for (const f of existing) {
+      if (f.emoji) continue;
+      const emoji = resolveEmoji(f.nombre, f.categoria, f.emoji);
+      if (emoji) {
+        toUpdate.push({ ...f, emoji });
+        updatedEmojis++;
+      }
+    }
+    if (toUpdate.length > 0) {
+      await batchPutItems(T.foods(), toUpdate as unknown as Record<string, unknown>[]);
+    }
 
-    return response(201, { message: "Catálogo insertado", inserted: toInsert.length }, origin);
+    return response(201, {
+      message: "Catálogo actualizado",
+      inserted: toInsert.length,
+      updatedEmojis,
+    }, origin);
   } catch (err) {
     console.error("seedFoods error:", err);
     return response(500, { message: "Internal server error" }, origin);

@@ -57,7 +57,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (post.userId && post.userId !== auth.userId) {
       await sendPushToUser(post.userId, {
         title: "💬 Nuevo comentario",
-        body: `${autorNombre} comentó tu publicación: ${comment.texto.slice(0, 70)}`,
+        body: `${autorNombre} comentó tu publicación: ${comment.texto.slice(0, 300)}`,
         url: "/comunidad",
       });
     }

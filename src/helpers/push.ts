@@ -32,6 +32,10 @@ export interface PushPayload {
   title: string;
   body?: string;
   url?: string;
+  /** Id estable para deduplicar en el centro de notificaciones (opcional) */
+  id?: string;
+  /** Emoji representativo que se muestra en el centro de notificaciones (opcional) */
+  emoji?: string;
 }
 
 interface StoredSubscription {

@@ -52,7 +52,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (item.destinatario !== "GROUP") {
       await sendPushToUser(item.destinatario, {
         title: "📋 Recomendación de tu coach",
-        body: item.texto.slice(0, 80),
+        body: item.texto.slice(0, 300),
         url: "/inicio",
       });
     }

@@ -57,7 +57,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (isCoach(auth)) {
       await sendPushToAll({
         title: "📣 El coach publicó",
-        body: post.texto.length > 0 ? post.texto.slice(0, 80) : "Nuevo flyer en la comunidad",
+        body: post.texto.length > 0 ? post.texto.slice(0, 300) : "Nuevo flyer en la comunidad",
         url: "/comunidad",
       });
     }

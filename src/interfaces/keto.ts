@@ -136,6 +136,7 @@ export interface FoodItem {
   unidad: FoodUnit;
   equivalenciaGramos?: number; // para "und": cuántos gramos equivale 1 unidad
   categoria?: FoodCategory;
+  emoji?: string; // emoji representativo del alimento (grilla visual)
 }
 
 // ─── Líquidos ────────────────────────────────────────────────

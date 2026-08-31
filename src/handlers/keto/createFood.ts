@@ -54,6 +54,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       unidad: unidad as "g" | "und" | "ml",
       equivalenciaGramos: body.equivalenciaGramos != null ? Number(body.equivalenciaGramos) : undefined,
       categoria: categoria ? (categoria as FoodCategory) : undefined,
+      emoji: body.emoji ? String(body.emoji).trim().slice(0, 8) : undefined,
     };
 
     await putItem(T.foods(), food as unknown as Record<string, unknown>);

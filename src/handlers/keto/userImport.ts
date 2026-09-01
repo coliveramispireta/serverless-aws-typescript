@@ -78,27 +78,36 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
 
     // ─── Construir items de comidas ───
-    const mealItems: MealEntryItem[] = rawMeals.map((m: Record<string, unknown>) => ({
-      id: uuidv4(),
-      userId: auth.userId,
-      fechaHora: new Date(String(m.fechaHora)).toISOString(),
-      alimento: String(m.alimento).trim(),
-      gramos: Number(m.gramos),
-      comida:
-        m.comida && VALID_MEAL_TYPES.includes(m.comida as MealType)
-          ? (m.comida as MealType)
-          : undefined,
-      nota: m.nota ? String(m.nota) : undefined,
-    }));
+    // Se añade +i ms a cada alimento para evitar colisión de SK (fechaHora)
+    // cuando hay varios alimentos a la misma hora (mismo patrón que createMealBlock).
+    const mealItems: MealEntryItem[] = rawMeals.map((m: Record<string, unknown>, i: number) => {
+      const base = new Date(String(m.fechaHora));
+      return {
+        id: uuidv4(),
+        userId: auth.userId,
+        fechaHora: new Date(base.getTime() + i).toISOString(),
+        alimento: String(m.alimento).trim(),
+        gramos: Number(m.gramos),
+        comida:
+          m.comida && VALID_MEAL_TYPES.includes(m.comida as MealType)
+            ? (m.comida as MealType)
+            : undefined,
+        nota: m.nota ? String(m.nota) : undefined,
+      };
+    });
 
     // ─── Construir items de líquidos ───
-    const liquidItems: LiquidItem[] = rawLiquids.map((l: Record<string, unknown>) => ({
-      id: uuidv4(),
-      userId: auth.userId,
-      fechaHora: new Date(String(l.fechaHora)).toISOString(),
-      cantidadMl: Number(l.cantidadMl),
-      nota: l.nota ? String(l.nota) : undefined,
-    }));
+    // Ídem: +j ms para evitar colisión de SK entre líquidos de la misma hora.
+    const liquidItems: LiquidItem[] = rawLiquids.map((l: Record<string, unknown>, j: number) => {
+      const base = new Date(String(l.fechaHora));
+      return {
+        id: uuidv4(),
+        userId: auth.userId,
+        fechaHora: new Date(base.getTime() + j).toISOString(),
+        cantidadMl: Number(l.cantidadMl),
+        nota: l.nota ? String(l.nota) : undefined,
+      };
+    });
 
     // ─── Escritura batch ───
     await Promise.all([

@@ -36,6 +36,8 @@ export interface PushPayload {
   id?: string;
   /** Emoji representativo que se muestra en el centro de notificaciones (opcional) */
   emoji?: string;
+  /** URL de imagen grande (flyer) que muestra Android en la notificación (opcional) */
+  image?: string;
 }
 
 interface StoredSubscription {

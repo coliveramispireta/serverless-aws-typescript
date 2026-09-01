@@ -5,6 +5,7 @@ import { getAuth, isCoach } from "../../helpers/auth";
 import { getItem, putItem, T } from "../../data/ketoRepo";
 import { PostItem, KetoUserProfile } from "../../interfaces/keto";
 import { sendPushToAll } from "../../helpers/push";
+import { presignDownload } from "../../helpers/s3";
 
 /** POST /posts — nueva publicación en el feed del grupo */
 export const handler: APIGatewayProxyHandler = async (event) => {
@@ -55,10 +56,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     // 🔔 Solo los posts del COACH notifican a todos (flyers/anuncios).
     // Los posts de usuarios no generan broadcast (anti-spam).
     if (isCoach(auth)) {
+      // Si el flyer lleva imagen, generar URL firmada para que Android la muestre
+      // en la notificación (campo `image`).
+      let pushImage: string | undefined;
+      if (post.imagenKey) {
+        try {
+          pushImage = await presignDownload(post.imagenKey);
+        } catch (e) {
+          console.warn("presignDownload flyer:", e);
+        }
+      }
       await sendPushToAll({
         title: "📣 El coach publicó",
         body: post.texto.length > 0 ? post.texto.slice(0, 300) : "Nuevo flyer en la comunidad",
         url: "/comunidad",
+        image: pushImage,
       });
     }
 

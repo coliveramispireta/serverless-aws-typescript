@@ -37,6 +37,7 @@ listChatMessages: ${file(./serverless-functions/keto/listChatMessages.yml)}
 sendChatMessage: ${file(./serverless-functions/keto/sendChatMessage.yml)}
 listRecommendations: ${file(./serverless-functions/keto/listRecommendations.yml)}
 createRecommendation: ${file(./serverless-functions/keto/createRecommendation.yml)}
+markRecommendationRead: ${file(./serverless-functions/keto/markRecommendationRead.yml)}
 listMessages: ${file(./serverless-functions/keto/listMessages.yml)}
 sendMessageToUser: ${file(./serverless-functions/keto/sendMessageToUser.yml)}
 coachListUsers: ${file(./serverless-functions/keto/coachListUsers.yml)}

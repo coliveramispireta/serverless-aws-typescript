@@ -65,6 +65,36 @@ export async function queryByUser<T>(
 }
 
 /**
+ * Consulta TODAS las filas de un usuario paginando con ExclusiveStartKey
+ * (hasta `maxItems`, por defecto 5000). A diferencia de `queryByUser`, no se
+ * corta en la primera página de DynamoDB, así el coach ve el historial completo.
+ */
+export async function queryByUserAll<T>(
+  table: string,
+  userId: string,
+  options?: { maxItems?: number; ascending?: boolean },
+): Promise<T[]> {
+  const max = options?.maxItems ?? 5000;
+  const items: T[] = [];
+  let lastKey: Record<string, unknown> | undefined;
+  do {
+    const result = await ddb.send(
+      new QueryCommand({
+        TableName: table,
+        KeyConditionExpression: "#u = :uid",
+        ExpressionAttributeNames: { "#u": "userId" },
+        ExpressionAttributeValues: { ":uid": userId },
+        ScanIndexForward: options?.ascending ?? false,
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+    items.push(...((result.Items as T[]) ?? []));
+    lastKey = result.LastEvaluatedKey;
+  } while (lastKey && items.length < max);
+  return items;
+}
+
+/**
  * Busca un item del usuario por su `id` lógico en una tabla con
  * PK=userId + SK=fechaHora, y lo elimina. Devuelve true si existía.
  */

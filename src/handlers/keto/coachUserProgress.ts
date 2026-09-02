@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { response } from "../../helpers/response";
 import { getAuth, isCoach } from "../../helpers/auth";
-import { getItem, queryByUser, T } from "../../data/ketoRepo";
+import { getItem, queryByUserAll, T } from "../../data/ketoRepo";
 import {
   AchievementItem,
   KetoUserProfile,
@@ -27,10 +27,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     const [usuario, weightsRaw, comidas, logros, liquidos] = await Promise.all([
       getItem<KetoUserProfile>(T.users(), { userId }),
-      queryByUser<WeightEntryItem>(T.weights(), userId, { limit: 200, ascending: true }),
-      queryByUser<MealEntryItem>(T.meals(), userId, { limit: 200, ascending: false }),
-      queryByUser<AchievementItem>(T.achievements(), userId, { limit: 100, ascending: false }),
-      queryByUser<LiquidItem>(T.liquids(), userId, { limit: 200, ascending: false }),
+      queryByUserAll<WeightEntryItem>(T.weights(), userId, { ascending: true }),
+      queryByUserAll<MealEntryItem>(T.meals(), userId),
+      queryByUserAll<AchievementItem>(T.achievements(), userId),
+      queryByUserAll<LiquidItem>(T.liquids(), userId),
     ]);
 
     // Firmar las evidencias para que el coach pueda verlas

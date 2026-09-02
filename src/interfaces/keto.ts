@@ -115,6 +115,7 @@ export interface EngagementItem {
   texto: string;
   createdByUserId: string;
   createdByEmail: string;
+  leida?: boolean; // true cuando el usuario destinatario la leyó (recomendaciones)
 }
 
 // ─── Catálogo de alimentos ────────────────────────────────────

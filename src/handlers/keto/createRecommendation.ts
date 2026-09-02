@@ -8,7 +8,9 @@ import { sendPushToUser } from "../../helpers/push";
 
 /**
  * POST /recommendations — solo coach.
- * Body: { texto, destinatarioUserId? } — sin destinatario = para todo el grupo.
+ * Body: { texto, destinatarioUserId } — las recomendaciones son SIEMPRE
+ * personalizadas (dirigidas a un usuario). Para contenido general se usa
+ * una publicación (flyer) que llega a todos por la comunidad.
  */
 export const handler: APIGatewayProxyHandler = async (event) => {
   const origin = event.headers?.Origin || event.headers?.origin;
@@ -29,11 +31,19 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Missing fields", fields: ["texto"] }, origin);
     }
 
-    // El coach no puede dirigirse a sí mismo como usuario normal
-    const destinatario =
-      body.destinatarioUserId && String(body.destinatarioUserId) !== auth.userId
-        ? String(body.destinatarioUserId)
-        : "GROUP";
+    // Las recomendaciones son personalizadas: exigimos un destinatario válido
+    if (
+      !body.destinatarioUserId ||
+      String(body.destinatarioUserId) === "GROUP" ||
+      String(body.destinatarioUserId) === auth.userId
+    ) {
+      return response(
+        400,
+        { message: "Elige un usuario: las recomendaciones son personalizadas" },
+        origin,
+      );
+    }
+    const destinatario = String(body.destinatarioUserId);
 
     const item: EngagementItem = {
       itemId: uuidv4(),
@@ -44,18 +54,17 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       texto: String(body.texto).trim().slice(0, 2000),
       createdByUserId: auth.userId,
       createdByEmail: auth.email,
+      leida: false,
     };
 
     await putItem(T.engagement(), item as unknown as Record<string, unknown>);
 
-    // 🔔 Push solo si es dirigida a un usuario (las del grupo no notifican para no saturar)
-    if (item.destinatario !== "GROUP") {
-      await sendPushToUser(item.destinatario, {
-        title: "📋 Recomendación de tu coach",
-        body: item.texto.slice(0, 300),
-        url: "/inicio",
-      });
-    }
+    // 🔔 Siempre notifica (es personalizada)
+    await sendPushToUser(item.destinatario, {
+      title: "📋 Recomendación de tu coach",
+      body: item.texto.slice(0, 300),
+      url: "/inicio",
+    });
 
     return response(201, item, origin);
   } catch (err) {

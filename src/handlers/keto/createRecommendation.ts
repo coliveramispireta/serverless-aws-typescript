@@ -31,11 +31,11 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Missing fields", fields: ["texto"] }, origin);
     }
 
-    // Las recomendaciones son personalizadas: exigimos un destinatario válido
+    // Las recomendaciones son personalizadas: exigimos un destinatario válido.
+    // Se permite que el coach se auto-envíe (mbox para probar su propia cuenta).
     if (
       !body.destinatarioUserId ||
-      String(body.destinatarioUserId) === "GROUP" ||
-      String(body.destinatarioUserId) === auth.userId
+      String(body.destinatarioUserId) === "GROUP"
     ) {
       return response(
         400,

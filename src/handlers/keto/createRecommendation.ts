@@ -6,6 +6,9 @@ import { putItem, T } from "../../data/ketoRepo";
 import { EngagementItem } from "../../interfaces/keto";
 import { sendPushToUser } from "../../helpers/push";
 
+/** Máx. de caracteres (incluidos espacios) para una RECOMENDACIÓN/feedback. */
+export const MAX_RECOMENDACION_CHARS = 10000;
+
 /**
  * POST /recommendations — solo coach.
  * Body: { texto, destinatarioUserId } — las recomendaciones son SIEMPRE
@@ -31,6 +34,20 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       return response(400, { message: "Missing fields", fields: ["texto"] }, origin);
     }
 
+    // Las recomendaciones pueden incluir feedbacks largos (máx. 10.000 caracteres).
+    // Si se excede, se bloquea con un error claro (no truncar silenciosamente).
+    const texto = String(body.texto).trim();
+    if (texto.length > MAX_RECOMENDACION_CHARS) {
+      return response(
+        400,
+        {
+          message: `La recomendación es demasiado larga (máx. ${MAX_RECOMENDACION_CHARS} caracteres).`,
+          max: MAX_RECOMENDACION_CHARS,
+        },
+        origin,
+      );
+    }
+
     // Las recomendaciones son personalizadas: exigimos un destinatario válido.
     // Se permite que el coach se auto-envíe (mbox para probar su propia cuenta).
     if (
@@ -51,7 +68,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       source: "coach",
       destinatario,
       createdAt: new Date().toISOString(),
-      texto: String(body.texto).trim().slice(0, 2000),
+      texto,
       createdByUserId: auth.userId,
       createdByEmail: auth.email,
       leida: false,

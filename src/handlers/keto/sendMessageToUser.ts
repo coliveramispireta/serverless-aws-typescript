@@ -6,6 +6,9 @@ import { putItem, T } from "../../data/ketoRepo";
 import { EngagementItem } from "../../interfaces/keto";
 import { sendPushToUser } from "../../helpers/push";
 
+/** Máx. de caracteres (incluidos espacios) para un MENSAJE personalizado. */
+export const MAX_MENSAJE_CHARS = 300;
+
 /**
  * POST /messages — solo coach. Mensaje personalizado a un usuario.
  * Body: { texto, destinatarioUserId } (destinatarioUserId requerido)
@@ -31,13 +34,27 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (missing.length > 0)
       return response(400, { message: "Missing fields", fields: missing }, origin);
 
+    // Los mensajes son cortos (máx. 300 caracteres incluidos espacios). Un texto
+    // más largo es un feedback → debe ir como RECOMENDACIÓN, no como mensaje.
+    const texto = String(body.texto).trim();
+    if (texto.length > MAX_MENSAJE_CHARS) {
+      return response(
+        400,
+        {
+          message: `El mensaje es demasiado largo (máx. ${MAX_MENSAJE_CHARS} caracteres). Para un feedback largo usa Recomendaciones.`,
+          max: MAX_MENSAJE_CHARS,
+        },
+        origin,
+      );
+    }
+
     const item: EngagementItem = {
       itemId: uuidv4(),
       tipo: "mensaje",
       source: "coach",
       destinatario: String(body.destinatarioUserId),
       createdAt: new Date().toISOString(),
-      texto: String(body.texto).trim().slice(0, 2000),
+      texto,
       createdByUserId: auth.userId,
       createdByEmail: auth.email,
     };
